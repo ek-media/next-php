@@ -15,12 +15,24 @@ export function handle(php: ActivePhpVersion) {
             ip: (ip.startsWith('::ffff:') ? ip.substring('::ffff:'.length) : ip),
             headers: req.headers
         })).toString('base64');
+
+        async function execPHP(command: string) {
+            if(php.mode === 'cgi')
+                return await exec([
+                    php.bin,
+                    command,
+                    `NEXTJS_PAYLOAD="${payload}"`
+                ]);
+            else
+                return await exec([
+                    php.bin,
+                    command,
+                    payload
+                ])
+        }
+
         try {
-            const test = await exec([
-                `NEXT_PHP_PAYLOAD="${payload}"`,
-                php.bin,
-                join(__dirname, '../loader.php')
-            ].join(' '));
+            const test = await execPHP(join(__dirname, '../loader.php'));
             res.end(test);
         } catch(e) {
             res.statusCode = 500;

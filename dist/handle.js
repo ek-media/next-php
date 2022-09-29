@@ -26,12 +26,24 @@ function handle(php) {
                 ip: (ip.startsWith('::ffff:') ? ip.substring('::ffff:'.length) : ip),
                 headers: req.headers
             })).toString('base64');
+            function execPHP(command) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (php.mode === 'cgi')
+                        return yield (0, utils_1.exec)([
+                            php.bin,
+                            command,
+                            `NEXTJS_PAYLOAD="${payload}"`
+                        ]);
+                    else
+                        return yield (0, utils_1.exec)([
+                            php.bin,
+                            command,
+                            payload
+                        ]);
+                });
+            }
             try {
-                const test = yield (0, utils_1.exec)([
-                    `NEXT_PHP_PAYLOAD="${payload}"`,
-                    php.bin,
-                    (0, path_1.join)(__dirname, '../loader.php')
-                ].join(' '));
+                const test = yield execPHP((0, path_1.join)(__dirname, '../loader.php'));
                 res.end(test);
             }
             catch (e) {

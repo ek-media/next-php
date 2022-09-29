@@ -1,9 +1,15 @@
 <?php
-print_r($_GET);
+if(isset($_SERVER['argv'])) {
+    if($_SERVER['argc'] !== 2)
+        throw new Error('Internal server error');
+    $args = json_decode(base64_decode($_SERVER['argv'][1]), true);
+} else {
+    if(!isset($_GET['NEXTJS_PAYLOAD']))
+        throw new Error('Internal server error');
+    $args = json_decode(base64_decode($_GET['NEXTJS_PAYLOAD']), true);
+}
+print_r($args);
 die();
-if($_SERVER['argc'] !== 2)
-    throw new Error('Internal server error');
-$args = json_decode(base64_decode($_SERVER['argv'][1]), true);
 
 $_HEADERS = [];
 
