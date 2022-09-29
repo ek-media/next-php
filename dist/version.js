@@ -61,39 +61,10 @@ function getDefaultVersion() {
 exports.getDefaultVersion = getDefaultVersion;
 function win32() {
     return __awaiter(this, void 0, void 0, function* () {
-        const cli = (yield (0, utils_1.exec)(`powershell -command "gcm php | Format-Table Name, Version, Definition"`))
-            .split('\r\n')
-            .filter(row => row.startsWith('php'))
-            .map(row => row.split(' '))
-            .filter(row => row.length === 3)
-            .map(row => ({
-            version: parseFloat(row[1]),
-            cli_path: row[2]
-        }));
-        const cgi = (yield (0, utils_1.exec)(`powershell -command "gcm php-cgi | Format-Table Name, Version, Definition"`))
-            .split('\r\n')
-            .filter(row => row.startsWith('php'))
-            .map(row => row.split(' '))
-            .filter(row => row.length === 3)
-            .map(row => ({
-            version: parseFloat(row[1]),
-            cgi_path: row[2]
-        }));
-        const temp_versions = {};
-        for (const element of [...cli, ...cgi]) {
-            if (typeof temp_versions[element.version.toString()] === "undefined")
-                temp_versions[element.version.toString()] = {
-                    cgi_path: element.cgi_path,
-                    cli_path: element.cli_path
-                };
-            else
-                temp_versions[element.version.toString()] = {
-                    cgi_path: temp_versions[element.version.toString()].cgi_path || element.cgi_path,
-                    cli_path: temp_versions[element.version.toString()].cli_path || element.cli_path
-                };
-        }
-        return Object.entries(temp_versions)
-            .map(([version, info]) => (Object.assign({ version: parseFloat(version) }, info)));
+        const defaultVersion = yield getDefaultVersion();
+        if (!defaultVersion)
+            return [];
+        return [defaultVersion];
     });
 }
 function linux() {
