@@ -1,0 +1,14 @@
+{
+  "name": "next-php",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf dist && tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.23",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.8.4"
+  }
+}
