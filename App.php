@@ -1,5 +1,5 @@
 <?php
-class App {
+class Application {
     public function get() {
 
     }
