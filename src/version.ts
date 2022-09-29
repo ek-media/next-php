@@ -66,7 +66,8 @@ async function win32(): Promise<PhpVersion[]> {
 
 async function linux(): Promise<PhpVersion[]> {
     const test = (await exec(`ls /usr/local/php*/bin`))
-        .split('\r\n\r\n');
+        .replace(/\r\n/g, '\n')
+        .split('\n\n');
     console.log(test)
     return []
 }
