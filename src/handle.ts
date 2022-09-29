@@ -25,6 +25,7 @@ export function handle(php: ActivePhpVersion) {
         } catch(e) {
             res.statusCode = 500;
             res.end(JSON.stringify(e));
+            console.log(e);
         }
     }
 }
