@@ -21,5 +21,5 @@ $_SERVER['REQUEST_METHOD'] = $args['method'];
 foreach($_HEADERS as $key => $value)
     $_SERVER['HTTP_' . $key] = $value;
 
-print_r(getallheaders());
+print_r($args);
 ?>
