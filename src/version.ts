@@ -1,5 +1,4 @@
 import { exec } from "./utils";
-import { existsSync } from 'fs';
 
 type PhpVersion = {
     version: number,
@@ -7,7 +6,7 @@ type PhpVersion = {
     cgi_path?: string
 }
 
-export async function retrievePHPVersions(): Promise<PhpVersion[]> {
+export async function getVersions(): Promise<PhpVersion[]> {
     switch(process.platform) {
         case 'win32':
             return await win32();
@@ -18,6 +17,36 @@ export async function retrievePHPVersions(): Promise<PhpVersion[]> {
         default:
             throw new Error('Platform not supported by NextJS php extension');
     }
+}
+
+export async function getDefaultVersion(): Promise<PhpVersion | undefined> {
+    let version: Partial<PhpVersion> = {};
+
+    try {
+        const cgi_version = await exec(`php-cgi -v`);
+        const match = cgi_version.match(/PHP ([0-9]\.[0-9]\.[0-9])/);
+        if(match) {
+            version.version = parseFloat(match[1]);
+            version.cgi_path = 'php-cgi';
+        }
+    } catch(e) {}
+
+    try {
+        const cli_version = await exec(`php -v`);
+        const match = cli_version.match(/PHP ([0-9]\.[0-9]\.[0-9])/);
+        if(match) {
+            if(!version.version) {
+                version.version = parseFloat(match[1]);
+                version.cgi_path = 'php';
+            } else {
+                if(version.version === parseFloat(match[1]))
+                    version.cgi_path = 'php';
+            }
+        }
+    } catch(e) {}
+
+    if(!version.version) return undefined;
+    return version as PhpVersion;
 }
 
 async function win32(): Promise<PhpVersion[]> {
