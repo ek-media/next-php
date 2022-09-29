@@ -38,6 +38,7 @@ function NextPHP(config = {}) {
                     process.exit(1);
                 }
                 catch (e) {
+                    console.log(e);
                     console.error('Cannot retrieve PHP versions, please check if PHP is installed on your system.');
                     process.exit(1);
                 }
