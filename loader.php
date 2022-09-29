@@ -21,5 +21,12 @@ $_SERVER['REQUEST_METHOD'] = $args['method'];
 foreach($_HEADERS as $key => $value)
     $_SERVER['HTTP_' . $key] = $value;
 
+foreach(scandir($args['document_root'] . '/php') as $file) {
+    if(!in_array($file, ['.', '..']))
+        require($args['document_root'] . '/php/' . $file);
+}
+
+$app = new Application();
+
 print_r($args);
 ?>
