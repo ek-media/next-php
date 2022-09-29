@@ -36,7 +36,7 @@ function handle(php) {
             }
             catch (e) {
                 res.statusCode = 500;
-                res.end(e);
+                res.end(JSON.stringify(e));
             }
         });
     };
