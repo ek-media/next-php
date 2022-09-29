@@ -51,10 +51,3 @@ export default async function NextPHP(config: NextPHPConfig = {}) {
         mode: php.mode
     }
 }
-
-(async () => {
-    const php = await NextPHP();
-    createServer(async (req, res) => {
-        await php.handle(req, res);
-    }).listen(3333);
-})()

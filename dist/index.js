@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const handle_1 = require("./handle");
 const version_1 = require("./version");
-const http_1 = require("http");
 function NextPHP(config = {}) {
     return __awaiter(this, void 0, void 0, function* () {
         let php;
@@ -60,9 +59,3 @@ function NextPHP(config = {}) {
     });
 }
 exports.default = NextPHP;
-(() => __awaiter(void 0, void 0, void 0, function* () {
-    const php = yield NextPHP();
-    (0, http_1.createServer)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        yield php.handle(req, res);
-    })).listen(3333);
-}))();
