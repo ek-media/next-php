@@ -6,6 +6,13 @@ type PhpVersion = {
     cgi_path?: string
 }
 
+export type ActivePhpVersion = {
+    version: number,
+    mode: 'cli' | 'cgi',
+    bin: string,
+    is_default: boolean
+}
+
 export async function getVersions(): Promise<PhpVersion[]> {
     switch(process.platform) {
         case 'win32':

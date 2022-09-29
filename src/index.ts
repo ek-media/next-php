@@ -1,11 +1,13 @@
-import { getDefaultVersion, getVersions } from "./version"
+import { handle } from "./handle";
+import { ActivePhpVersion, getDefaultVersion, getVersions } from "./version";
+import { createServer } from 'http';
 
 type NextPHPConfig = {
     version?: string | number
 }
 
 export default async function NextPHP(config: NextPHPConfig = {}) {
-    let exec: { type: 'cgi' | 'cli', bin: string, version: number, is_default: boolean };
+    let php: ActivePhpVersion;
     if(config.version) {
         const installedVersions = await getVersions();
         const selection = installedVersions.filter(item => item.version === ((typeof config.version === "string") ? parseFloat(config.version) : config.version));
@@ -13,9 +15,9 @@ export default async function NextPHP(config: NextPHPConfig = {}) {
             console.error(`Cannot retrieve PHP version ${config.version}, please select one of these versions: ${installedVersions.map(version => version.version).join(', ')}.`);
             process.exit(1);
         }
-        exec = {
+        php = {
             bin: (selection[0].cgi_path || selection[0].cli_path) as string,
-            type: (selection[0].cgi_path ? 'cgi' : 'cli'),
+            mode: (selection[0].cgi_path ? 'cgi' : 'cli'),
             version: selection[0].version,
             is_default: false
         }
@@ -31,17 +33,27 @@ export default async function NextPHP(config: NextPHPConfig = {}) {
                 process.exit(1);
             }
         }
-        exec = {
+        php = {
             bin: ((typeof default_version.cgi_path !== "undefined") ? default_version.cgi_path : default_version.cli_path) as string,
-            type: (typeof default_version.cgi_path !== "undefined") ? 'cgi' : 'cli',
+            mode: (typeof default_version.cgi_path !== "undefined") ? 'cgi' : 'cli',
             version: default_version.version,
             is_default: true
         }
     }
 
-    console.log(`> Using PHP ${exec.version} (${exec.type})${exec.is_default ? ` <- default version` : ''}`);
+    console.log(`> Using PHP ${php.version} (${php.mode})${php.is_default ? ` <- default version` : ''} <`);
+
+    return {
+        handle: handle(php),
+        version: php.version,
+        bin: php.bin,
+        mode: php.mode
+    }
 }
 
 (async () => {
     const php = await NextPHP();
+    createServer(async (req, res) => {
+        await php.handle(req, res);
+    }).listen(3333);
 })()
