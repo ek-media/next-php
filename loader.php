@@ -1,5 +1,5 @@
 <?php
-print_r($_SERVER);
+print_r($_GET);
 die();
 if($_SERVER['argc'] !== 2)
     throw new Error('Internal server error');
@@ -15,5 +15,5 @@ $_SERVER['REQUEST_METHOD'] = $args['method'];
 foreach($_HEADERS as $key => $value)
     $_SERVER['HTTP_' . $key] = $value;
 
-print_r(getallheaders());
+print_r($_GET);
 ?>
