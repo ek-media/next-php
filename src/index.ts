@@ -5,7 +5,7 @@ type NextPHPConfig = {
 }
 
 export default async function NextPHP(config: NextPHPConfig = {}) {
-    let exec: { type: 'cgi' | 'cli', bin: string, version: number };
+    let exec: { type: 'cgi' | 'cli', bin: string, version: number, is_default: boolean };
     if(config.version) {
         const installedVersions = await getVersions();
         const selection = installedVersions.filter(item => item.version === ((typeof config.version === "string") ? parseFloat(config.version) : config.version));
@@ -16,7 +16,8 @@ export default async function NextPHP(config: NextPHPConfig = {}) {
         exec = {
             bin: (selection[0].cgi_path || selection[0].cli_path) as string,
             type: (selection[0].cgi_path ? 'cgi' : 'cli'),
-            version: selection[0].version
+            version: selection[0].version,
+            is_default: false
         }
     } else {
         const default_version = await getDefaultVersion();
@@ -33,15 +34,14 @@ export default async function NextPHP(config: NextPHPConfig = {}) {
         exec = {
             bin: ((typeof default_version.cgi_path !== "undefined") ? default_version.cgi_path : default_version.cli_path) as string,
             type: (typeof default_version.cgi_path !== "undefined") ? 'cgi' : 'cli',
-            version: default_version.version
+            version: default_version.version,
+            is_default: true
         }
     }
 
-    console.log(`> Using PHP ${exec.version} (${exec.type})`);
+    console.log(`> Using PHP ${exec.version} (${exec.type})${exec.is_default ? ` <- default version` : ''}`);
 }
 
 (async () => {
-    const php = await NextPHP({
-        version: 8.1
-    });
+    const php = await NextPHP();
 })()
