@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,10 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDefaultVersion = exports.getVersions = void 0;
-const utils_1 = require("./utils");
-function getVersions() {
+import { exec } from "./utils";
+export function getVersions() {
     return __awaiter(this, void 0, void 0, function* () {
         switch (process.platform) {
             case 'win32':
@@ -25,12 +22,11 @@ function getVersions() {
         }
     });
 }
-exports.getVersions = getVersions;
-function getDefaultVersion() {
+export function getDefaultVersion() {
     return __awaiter(this, void 0, void 0, function* () {
         let version = {};
         try {
-            const cgi_version = yield (0, utils_1.exec)(`php-cgi -v`);
+            const cgi_version = yield exec(`php-cgi -v`);
             const match = cgi_version.match(/PHP ([0-9]\.[0-9]\.[0-9])/);
             if (match) {
                 version.version = parseFloat(match[1]);
@@ -39,7 +35,7 @@ function getDefaultVersion() {
         }
         catch (e) { }
         try {
-            const cli_version = yield (0, utils_1.exec)(`php -v`);
+            const cli_version = yield exec(`php -v`);
             const match = cli_version.match(/PHP ([0-9]\.[0-9]\.[0-9])/);
             if (match) {
                 if (!version.version) {
@@ -58,10 +54,9 @@ function getDefaultVersion() {
         return version;
     });
 }
-exports.getDefaultVersion = getDefaultVersion;
 function win32() {
     return __awaiter(this, void 0, void 0, function* () {
-        const cli = (yield (0, utils_1.exec)(`powershell -command "gcm php | Format-Table Name, Version, Definition"`))
+        const cli = (yield exec(`powershell -command "gcm php | Format-Table Name, Version, Definition"`))
             .split('\r\n')
             .filter(row => row.startsWith('php'))
             .map(row => row.split(' '))
@@ -70,7 +65,7 @@ function win32() {
             version: parseFloat(row[1]),
             cli_path: row[2]
         }));
-        const cgi = (yield (0, utils_1.exec)(`powershell -command "gcm php-cgi | Format-Table Name, Version, Definition"`))
+        const cgi = (yield exec(`powershell -command "gcm php-cgi | Format-Table Name, Version, Definition"`))
             .split('\r\n')
             .filter(row => row.startsWith('php'))
             .map(row => row.split(' '))
@@ -98,7 +93,7 @@ function win32() {
 }
 function linux() {
     return __awaiter(this, void 0, void 0, function* () {
-        return (yield (0, utils_1.exec)(`ls /usr/local/php*/bin`))
+        return (yield exec(`ls /usr/local/php*/bin`))
             .replace(/\r\n/g, '\n')
             .split(/\n\n/)
             .map(row => row.split('\n').map(item => item.replace(/[\n]/g, '')))
