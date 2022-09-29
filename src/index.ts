@@ -29,6 +29,7 @@ export default async function NextPHP(config: NextPHPConfig = {}) {
                 console.error(`Cannot retrieve default PHP version, please select one of these versions: ${installedVersions.map(version => version.version).join(', ')}.`);
                 process.exit(1);
             } catch(e) {
+                console.log(e)
                 console.error('Cannot retrieve PHP versions, please check if PHP is installed on your system.');
                 process.exit(1);
             }
