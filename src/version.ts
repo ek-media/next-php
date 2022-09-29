@@ -65,7 +65,8 @@ async function win32(): Promise<PhpVersion[]> {
 }
 
 async function linux(): Promise<PhpVersion[]> {
-    const test = await exec(`ls /usr/local/php*/bin`);
+    const test = (await exec(`ls /usr/local/php*/bin`))
+        .split('\r\n');
     console.log(test)
     return []
 }
