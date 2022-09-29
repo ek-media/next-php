@@ -18,13 +18,14 @@ export function handle(php: ActivePhpVersion) {
         })).toString('base64');
 
         async function execPHP(command: string) {
-            if(php.mode === 'cgi')
-                return await exec([
+            if(php.mode === 'cgi') {
+                const res = await exec([
                     php.bin,
                     command,
                     `NEXTJS_PAYLOAD="${payload}"`
                 ]);
-            else
+                return res.split(/\n\n/)[1];
+            } else
                 return await exec([
                     php.bin,
                     command,

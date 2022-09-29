@@ -29,12 +29,14 @@ function handle(php) {
             })).toString('base64');
             function execPHP(command) {
                 return __awaiter(this, void 0, void 0, function* () {
-                    if (php.mode === 'cgi')
-                        return yield (0, utils_1.exec)([
+                    if (php.mode === 'cgi') {
+                        const res = yield (0, utils_1.exec)([
                             php.bin,
                             command,
                             `NEXTJS_PAYLOAD="${payload}"`
                         ]);
+                        return res.split(/\n\n/)[1];
+                    }
                     else
                         return yield (0, utils_1.exec)([
                             php.bin,
