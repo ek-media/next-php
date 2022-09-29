@@ -13,10 +13,5 @@ $_SERVER['REQUEST_METHOD'] = $args['method'];
 foreach($_HEADERS as $key => $value)
     $_SERVER['HTTP_' . $key] = $value;
 
-function getallheaders() {
-    global $_HEADERS;
-    return $_HEADERS;
-}
-
 print_r(getallheaders());
 ?>
