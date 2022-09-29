@@ -19,17 +19,18 @@ function handle(php) {
         return __awaiter(this, void 0, void 0, function* () {
             const url = (0, url_1.parse)(req.url || '');
             const ip = req.socket.remoteAddress || '';
+            const payload = Buffer.from(JSON.stringify({
+                pathname: url.pathname,
+                query: url.query,
+                method: ((_a = req.method) === null || _a === void 0 ? void 0 : _a.toUpperCase()) || 'GET',
+                ip: (ip.startsWith('::ffff:') ? ip.substring('::ffff:'.length) : ip),
+                headers: req.headers
+            })).toString('base64');
             try {
                 const test = yield (0, utils_1.exec)([
+                    `NEXT_PHP_PAYLOAD="${payload}"`,
                     php.bin,
-                    (0, path_1.join)(__dirname, '../loader.php'),
-                    Buffer.from(JSON.stringify({
-                        pathname: url.pathname,
-                        query: url.query,
-                        method: ((_a = req.method) === null || _a === void 0 ? void 0 : _a.toUpperCase()) || 'GET',
-                        ip: (ip.startsWith('::ffff:') ? ip.substring('::ffff:'.length) : ip),
-                        headers: req.headers
-                    })).toString('base64')
+                    (0, path_1.join)(__dirname, '../loader.php')
                 ].join(' '));
                 res.end(test);
             }
