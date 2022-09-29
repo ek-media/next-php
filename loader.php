@@ -28,5 +28,18 @@ foreach(scandir($args['document_root'] . '/php') as $file) {
 
 $app = new Application();
 
-print_r($args);
+if(file_exists($args['document_root'] . '/api/index.php'))
+    $file = $args['document_root'] . '/api/index.php';
+
+if(!isset($file))
+    throw new Error('Route not found');
+
+require($file);
+
+if(!isset($app->methods[$args['method']]))
+    throw new Error('Method not allowed');
+
+$request = new Request($args['method']);
+
+echo json_encode($app->methods[$args['method']]($request));
 ?>
