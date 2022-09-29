@@ -24,7 +24,8 @@ function handle(php) {
                 query: url.query,
                 method: ((_a = req.method) === null || _a === void 0 ? void 0 : _a.toUpperCase()) || 'GET',
                 ip: (ip.startsWith('::ffff:') ? ip.substring('::ffff:'.length) : ip),
-                headers: req.headers
+                headers: req.headers,
+                document_root: process.cwd()
             })).toString('base64');
             function execPHP(command) {
                 return __awaiter(this, void 0, void 0, function* () {

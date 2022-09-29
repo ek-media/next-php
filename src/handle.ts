@@ -13,7 +13,8 @@ export function handle(php: ActivePhpVersion) {
             query: url.query,
             method: req.method?.toUpperCase() || 'GET',
             ip: (ip.startsWith('::ffff:') ? ip.substring('::ffff:'.length) : ip),
-            headers: req.headers
+            headers: req.headers,
+            document_root: process.cwd()
         })).toString('base64');
 
         async function execPHP(command: string) {
