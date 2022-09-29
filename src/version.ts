@@ -65,13 +65,19 @@ async function win32(): Promise<PhpVersion[]> {
 }
 
 async function linux(): Promise<PhpVersion[]> {
-    const test = (await exec(`ls /usr/local/php*/bin`))
+    return ((await exec(`ls /usr/local/php*/bin`))
         .replace(/\r\n/g, '\n')
         .split(/\n\n/)
-        .map(row => row.split('\n'))
+        .map(row => row.split('\n').map(item => item.replace(/[\n]/g, '')))
         .map(row => {
-            console.log(row[0].match(/(php[0-9]{0,3})/))
-        });
-    console.log(test)
-    return []
+            const version_match = row[0].match(/(php[0-9]{0,3})/);
+            if(!version_match || version_match.length === 0)
+                return null;
+            return {
+                version: parseFloat(version_match[0].substring(3).split('').join('.')),
+                cgi_path: (row.includes('php-cgi') ? `/usr/local/${version_match[0]}/bin/php-cgi` : undefined),
+                cli_path: (row.includes('php') ? `/usr/local/${version_match[0]}/bin/php` : undefined),
+            }
+        })
+        .filter(row => row !== null) as PhpVersion[]);
 }
