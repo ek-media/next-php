@@ -19,18 +19,24 @@ function handle(php) {
         return __awaiter(this, void 0, void 0, function* () {
             const url = (0, url_1.parse)(req.url || '');
             const ip = req.socket.remoteAddress || '';
-            const test = yield (0, utils_1.exec)([
-                php.bin,
-                (0, path_1.join)(__dirname, '../loader.php'),
-                Buffer.from(JSON.stringify({
-                    pathname: url.pathname,
-                    query: url.query,
-                    method: ((_a = req.method) === null || _a === void 0 ? void 0 : _a.toUpperCase()) || 'GET',
-                    ip: (ip.startsWith('::ffff:') ? ip.substring('::ffff:'.length) : ip),
-                    headers: req.headers
-                })).toString('base64')
-            ].join(' '));
-            res.end(test);
+            try {
+                const test = yield (0, utils_1.exec)([
+                    php.bin,
+                    (0, path_1.join)(__dirname, '../loader.php'),
+                    Buffer.from(JSON.stringify({
+                        pathname: url.pathname,
+                        query: url.query,
+                        method: ((_a = req.method) === null || _a === void 0 ? void 0 : _a.toUpperCase()) || 'GET',
+                        ip: (ip.startsWith('::ffff:') ? ip.substring('::ffff:'.length) : ip),
+                        headers: req.headers
+                    })).toString('base64')
+                ].join(' '));
+                res.end(test);
+            }
+            catch (e) {
+                res.statusCode = 500;
+                res.end(e);
+            }
         });
     };
 }
