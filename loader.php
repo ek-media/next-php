@@ -1,4 +1,6 @@
 <?php
+print_r($_SERVER);
+die();
 if($_SERVER['argc'] !== 2)
     throw new Error('Internal server error');
 $args = json_decode(base64_decode($_SERVER['argv'][1]), true);
