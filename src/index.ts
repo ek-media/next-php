@@ -1,4 +1,3 @@
-import type { NextServer } from 'next/dist/server/next';
 import { retrievePHPVersions } from './version';
 
 type NextPHPConfig = {
@@ -6,7 +5,7 @@ type NextPHPConfig = {
     host?: string
 }
 
-export default async function NextPHP(app: NextServer) {
+export default async function NextPHP() {
     
 }
 
