@@ -14,7 +14,15 @@ const version_1 = require("./version");
 function NextPHP(config = {}) {
     return __awaiter(this, void 0, void 0, function* () {
         let php;
-        if (config.version) {
+        if (config.bin) {
+            const selectedBin = yield (0, version_1.checkPHPVersion)(config.bin);
+            if (typeof selectedBin === "undefined") {
+                console.error(`The selected executable is not a valid PHP executable (${config.bin}).`);
+                process.exit(1);
+            }
+            php = selectedBin;
+        }
+        else if (config.version) {
             const installedVersions = yield (0, version_1.getVersions)();
             const selection = installedVersions.filter(item => item.version === ((typeof config.version === "string") ? parseFloat(config.version) : config.version));
             if (selection.length === 0) {

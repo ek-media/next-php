@@ -11,10 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.exec = void 0;
 const child_process_1 = require("child_process");
-function exec(...command) {
+function exec(command) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => {
-            (0, child_process_1.exec)(command.join(' '), (error, stdout) => {
+            (0, child_process_1.exec)((Array.isArray(command) ? command.join(' ') : command), (error, stdout) => {
                 if (error)
                     return reject(error);
                 return resolve(stdout);

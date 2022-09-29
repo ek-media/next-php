@@ -1,14 +1,21 @@
 import { handle } from "./handle";
-import { ActivePhpVersion, getDefaultVersion, getVersions } from "./version";
-import { createServer } from 'http';
+import { ActivePhpVersion, checkPHPVersion, getDefaultVersion, getVersions } from "./version";
 
 type NextPHPConfig = {
-    version?: string | number
+    version?: string | number,
+    bin?: string
 }
 
 export default async function NextPHP(config: NextPHPConfig = {}) {
     let php: ActivePhpVersion;
-    if(config.version) {
+    if(config.bin) {
+        const selectedBin = await checkPHPVersion(config.bin as string);
+        if(typeof selectedBin === "undefined") {
+            console.error(`The selected executable is not a valid PHP executable (${config.bin}).`);
+            process.exit(1);
+        }
+        php = selectedBin;
+    } else if(config.version) {
         const installedVersions = await getVersions();
         const selection = installedVersions.filter(item => item.version === ((typeof config.version === "string") ? parseFloat(config.version) : config.version));
         if(selection.length === 0) {

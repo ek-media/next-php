@@ -1,1 +1,1 @@
-export declare function exec(...command: string[]): Promise<string>;
+export declare function exec(command: string[] | string): Promise<string>;

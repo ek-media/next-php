@@ -10,5 +10,6 @@ export declare type ActivePhpVersion = {
     is_default: boolean;
 };
 export declare function getVersions(): Promise<PhpVersion[]>;
+export declare function checkPHPVersion(bin: string): Promise<ActivePhpVersion | undefined>;
 export declare function getDefaultVersion(): Promise<PhpVersion | undefined>;
 export {};

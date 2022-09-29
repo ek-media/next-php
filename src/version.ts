@@ -15,15 +15,31 @@ export type ActivePhpVersion = {
 
 export async function getVersions(): Promise<PhpVersion[]> {
     switch(process.platform) {
-        case 'win32':
-            return await win32();
         case 'linux':
         case 'android':
         case 'darwin':
             return await linux();
         default:
-            throw new Error('Platform not supported by NextJS php extension');
+            throw new Error('Platform not supported by NextJS php extension, please define PHP executable path.');
     }
+}
+
+export async function checkPHPVersion(bin: string): Promise<ActivePhpVersion | undefined> {
+    try {
+        const result = await exec([
+            bin,
+            '-v'
+        ]);
+        const match = result.match(/PHP ([0-9]\.[0-9]\.[0-9]) \((cgi-fcgi|cli)\)/);
+        if(match && match.length === 3)
+            return {
+                version: parseFloat(match[1]),
+                bin,
+                is_default: false,
+                mode: (match[2] === 'cli') ? 'cli' : 'cgi'
+            }
+    } catch(e) {}
+    return undefined;
 }
 
 export async function getDefaultVersion(): Promise<PhpVersion | undefined> {
@@ -54,12 +70,6 @@ export async function getDefaultVersion(): Promise<PhpVersion | undefined> {
 
     if(!version.version) return undefined;
     return version as PhpVersion;
-}
-
-async function win32(): Promise<PhpVersion[]> {
-    const defaultVersion = await getDefaultVersion();
-    if(!defaultVersion) return [];
-    return [defaultVersion];
 }
 
 async function linux(): Promise<PhpVersion[]> {

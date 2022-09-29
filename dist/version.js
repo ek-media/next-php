@@ -9,23 +9,42 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDefaultVersion = exports.getVersions = void 0;
+exports.getDefaultVersion = exports.checkPHPVersion = exports.getVersions = void 0;
 const utils_1 = require("./utils");
 function getVersions() {
     return __awaiter(this, void 0, void 0, function* () {
         switch (process.platform) {
-            case 'win32':
-                return yield win32();
             case 'linux':
             case 'android':
             case 'darwin':
                 return yield linux();
             default:
-                throw new Error('Platform not supported by NextJS php extension');
+                throw new Error('Platform not supported by NextJS php extension, please define PHP executable path.');
         }
     });
 }
 exports.getVersions = getVersions;
+function checkPHPVersion(bin) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const result = yield (0, utils_1.exec)([
+                bin,
+                '-v'
+            ]);
+            const match = result.match(/PHP ([0-9]\.[0-9]\.[0-9]) \((cgi-fcgi|cli)\)/);
+            if (match && match.length === 3)
+                return {
+                    version: parseFloat(match[1]),
+                    bin,
+                    is_default: false,
+                    mode: (match[2] === 'cli') ? 'cli' : 'cgi'
+                };
+        }
+        catch (e) { }
+        return undefined;
+    });
+}
+exports.checkPHPVersion = checkPHPVersion;
 function getDefaultVersion() {
     return __awaiter(this, void 0, void 0, function* () {
         let version = {};
@@ -59,14 +78,6 @@ function getDefaultVersion() {
     });
 }
 exports.getDefaultVersion = getDefaultVersion;
-function win32() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const defaultVersion = yield getDefaultVersion();
-        if (!defaultVersion)
-            return [];
-        return [defaultVersion];
-    });
-}
 function linux() {
     return __awaiter(this, void 0, void 0, function* () {
         return (yield (0, utils_1.exec)(`ls /usr/local/php*/bin`))
