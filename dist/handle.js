@@ -35,7 +35,9 @@ function handle(php) {
                             command,
                             `NEXTJS_PAYLOAD="${payload}"`
                         ]);
-                        return res.split('\n')[1];
+                        const structure = Object.fromEntries(res.split(';')
+                            .map(row => row.split('=')));
+                        return JSON.stringify(structure);
                     }
                     else
                         return yield (0, utils_1.exec)([

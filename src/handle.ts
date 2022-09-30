@@ -24,7 +24,11 @@ export function handle(php: ActivePhpVersion) {
                     command,
                     `NEXTJS_PAYLOAD="${payload}"`
                 ]);
-                return res.split('\n')[1];
+                const structure = Object.fromEntries(
+                    res.split(';')
+                        .map(row => row.split('='))
+                );
+                return JSON.stringify(structure);
             } else
                 return await exec([
                     php.bin,
