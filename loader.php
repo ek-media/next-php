@@ -40,6 +40,28 @@ if(!isset($app->methods[$args['method']]))
     throw new Error('Method not allowed');
 
 $request = new Request($args['method']);
+$response = new Response();
 
-echo json_encode($app->methods[$args['method']]($request));
+try {
+    $output = $app->methods[$args['method']]($request, $response);
+    echo json_encode([
+        'response' => $response->__toJson(),
+        'output' => $output,
+        'error' => null,
+        'success' => true
+    ]);
+} catch(Error $error) {
+    echo json_encode([
+        'response' => $response,
+        'output' => null,
+        'error' => [
+            'message' => $error->getMessage(),
+            'code' => $error->getCode(),
+            'file' => $error->getFile(),
+            'line' => $error->getLine(),
+            'trace' => $error->getTrace()
+        ],
+        'success' => false
+    ]);
+}
 ?>
