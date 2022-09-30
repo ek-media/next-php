@@ -48,6 +48,7 @@ function handle(php) {
             try {
                 const output = JSON.parse(yield execPHP((0, path_1.join)(__dirname, '../loader.php')));
                 if (output.success) {
+                    console.log(output);
                     res.statusCode = output.response.status;
                     for (const header in output.response.headers)
                         res.setHeader(header, output.response.headers[header]);

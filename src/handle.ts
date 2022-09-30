@@ -36,6 +36,7 @@ export function handle(php: ActivePhpVersion) {
         try {
             const output = JSON.parse(await execPHP(join(__dirname, '../loader.php')));
             if(output.success) {
+                console.log(output)
                 res.statusCode = output.response.status;
                 for(const header in output.response.headers)
                     res.setHeader(header, output.response.headers[header]);
