@@ -35,7 +35,8 @@ function handle(php) {
                             command,
                             `NEXTJS_PAYLOAD="${payload}"`
                         ]);
-                        return res.split('\r\n\r\n')[1];
+                        const output = res.split('\r\n\r\n')[1];
+                        return output.substring(1, output.length - 1);
                     }
                     else
                         return yield (0, utils_1.exec)([
