@@ -78,7 +78,7 @@ function handle(php) {
                     code: 500,
                     error: {
                         code: 500,
-                        message: 'Internal server error'
+                        message: JSON.stringify(e)
                     },
                     data: null
                 }));
