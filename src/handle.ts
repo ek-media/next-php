@@ -24,11 +24,7 @@ export function handle(php: ActivePhpVersion) {
                     command,
                     `NEXTJS_PAYLOAD="${payload}"`
                 ]);
-                const structure = Object.fromEntries(
-                    res.split(';')
-                        .map(row => row.split('='))
-                );
-                return JSON.stringify(structure);
+                return res.split('\r\n\r\n')[1];
             } else
                 return await exec([
                     php.bin,
