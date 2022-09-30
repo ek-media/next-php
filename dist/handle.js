@@ -35,8 +35,7 @@ function handle(php) {
                             command,
                             `NEXTJS_PAYLOAD="${payload}"`
                         ]);
-                        const output = res.split('\r\n\r\n')[1];
-                        return output.substring(1, output.length - 1);
+                        return res.split('\r\n\r\n')[1];
                     }
                     else
                         return yield (0, utils_1.exec)([
@@ -47,13 +46,42 @@ function handle(php) {
                 });
             }
             try {
-                const test = yield execPHP((0, path_1.join)(__dirname, '../loader.php'));
-                res.end(test);
+                const output = JSON.parse(yield execPHP((0, path_1.join)(__dirname, '../loader.php')));
+                if (output.success) {
+                    res.statusCode = output.response.status;
+                    for (const header in output.response.headers)
+                        res.setHeader(header, output.response.headers[header]);
+                    res.end(JSON.stringify({
+                        success: true,
+                        code: 200,
+                        error: null,
+                        data: output.output
+                    }));
+                }
+                else {
+                    res.statusCode = 500;
+                    res.end(JSON.stringify({
+                        success: false,
+                        code: 500,
+                        error: {
+                            code: output.error.code,
+                            message: output.error.message
+                        },
+                        data: null
+                    }));
+                }
             }
             catch (e) {
                 res.statusCode = 500;
-                res.end(JSON.stringify(e));
-                console.log(e);
+                res.end(JSON.stringify({
+                    success: false,
+                    code: 500,
+                    error: {
+                        code: 500,
+                        message: 'Internal server error'
+                    },
+                    data: null
+                }));
             }
         });
     };
